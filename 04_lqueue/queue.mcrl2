@@ -1,0 +1,64 @@
+% ==========================================================
+% FORMÁLNA ŠPECIFIKÁCIA ADT Queue (Front) v jazyku mCRL2
+% ==========================================================
+% Autor: [Tvoje meno]
+% Predmet: Operačné systémy / Programovanie
+% Úloha: 04_lqueue — Špecifikácia ADT Queue
+% ==========================================================
+
+sort
+  Elem = Int;                   % typ prvku vo fronte
+  Queue = List(Elem);           % reprezentácia frontu ako zoznamu (FIFO)
+
+map
+  % ==== Operácie ADT Queue ====
+  CreateQueue      : -> Queue;             % vytvorenie prázdneho frontu
+  IsEmptyQueue     : Queue -> Bool;        % test, či front je prázdny
+  Enqueue          : Elem × Queue -> Queue;% vloženie prvku na koniec frontu
+  Dequeue          : Queue -> Queue;       % odobratie prvku zo začiatku frontu
+  Front            : Queue -> Elem;        % vráti prvok zo začiatku frontu
+  MakeEmptyQueue   : Queue -> Queue;       % vyprázdnenie frontu
+
+var
+  e : Elem;
+  q : Queue;
+
+eqn
+  % ==== Definície funkcií ====
+
+  % vytvorí prázdny front
+  CreateQueue = [];
+
+  % front je prázdny, ak je prázdny zoznam
+  IsEmptyQueue(q) = (q == []);
+
+  % vloží prvok na koniec frontu
+  Enqueue(e, q) = q ++ [e];
+
+  % odstráni prvok zo začiatku frontu (ak nie je prázdny)
+  Dequeue(q) = if(q == []) then [] else tail(q);
+
+  % vráti prvok zo začiatku frontu
+  Front(q) = if(q == []) then 0 else head(q);
+
+  % vyprázdni front
+  MakeEmptyQueue(q) = [];
+
+% ==========================================================
+% PROCESOVÁ ČASŤ — MODEL SPRÁVANIA ADT Queue
+% ==========================================================
+
+act
+  create, enqueue, dequeue, front, empty, make_empty, stop;
+
+proc
+  QueueProc(q: Queue) =
+      empty(IsEmptyQueue(q))
+    + sum e:Elem . enqueue(e) . QueueProc(Enqueue(e, q))
+    + (q != []) -> ( front(Front(q)) . QueueProc(q) )
+    + (q != []) -> ( dequeue . QueueProc(Dequeue(q)) )
+    + make_empty . QueueProc(MakeEmptyQueue(q))
+    + stop;
+
+init
+  create . QueueProc(CreateQueue);

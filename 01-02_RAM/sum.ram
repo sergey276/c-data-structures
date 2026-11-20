@@ -1,0 +1,33 @@
+READ 1        ; R1 := n
+LOAD =0
+STORE 2       ; R2 := sum = 0
+LOAD =1
+STORE 3       ; R3 := i = 1
+
+LOOP:
+LOAD 1
+SUB 3         ; R1 - i
+JZ CONTINUE_END  ; якщо i = n, ще раз додаємо і йдемо в END
+JGTZ CONTINUE    ; якщо i < n, продовжуємо
+JMP END
+
+CONTINUE:
+LOAD 2
+ADD 3
+STORE 2
+
+LOAD 3
+ADD =1
+STORE 3
+JMP LOOP
+
+CONTINUE_END:    ; додаємо останнє число
+LOAD 2
+ADD 3
+STORE 2
+JMP END
+
+END:
+LOAD 2
+WRITE 2
+HALT

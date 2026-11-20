@@ -1,0 +1,31 @@
+; exp.ram – обчислення 2^n
+; Вхід: n (R1)
+; Вихід: 2^n (R2)
+
+READ 1       ; зчитуємо n у R1
+LOAD =1
+STORE 2      ; R2 = результат (2^0 = 1)
+LOAD =0
+STORE 3      ; R3 = лічильник i = 0
+
+LOOP:
+LOAD 3
+SUB 1
+LOAD 1
+SUB 3
+JGTZ CONTINUE  ; якщо i < n, продовжуємо
+JMP END        ; інакше кінець
+
+CONTINUE:
+LOAD 2
+ADD 2          ; R2 = R2 * 2
+STORE 2
+
+LOAD 3
+ADD =1
+STORE 3        ; i = i + 1
+JMP LOOP
+
+END:
+WRITE 2
+HALT

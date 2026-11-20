@@ -1,0 +1,34 @@
+; max.ram – пошук максимуму у послідовності
+; Вхід: n, a1, a2, ..., an
+; Вихід: max(a1, ..., an)
+
+READ 1       ; R1 = n (кількість чисел)
+LOAD 1
+STORE 3      ; R3 = лічильник = n
+
+READ 2       ; R2 = перше число (поточний максимум)
+
+LOOP:        
+LOAD 3
+SUB =1
+JZ END      ; якщо лічильник = 1, закінчуємо
+
+READ 1       ; читаємо наступне число в R1
+LOAD 1
+SUB 2        ; R1 - R2
+JGTZ UPDATE ; якщо R1 - R2 > 0, оновлюємо max
+JMP SKIP
+
+UPDATE:
+LOAD 1
+STORE 2     ; оновлюємо max
+
+SKIP:
+LOAD 3
+SUB =1
+STORE 3     ; зменшуємо лічильник
+JMP LOOP
+
+END:
+WRITE 2
+HALT
